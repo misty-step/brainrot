@@ -357,20 +357,17 @@ node --loader tsx scripts/analyze-something.ts
 
 ## 📚 Content Pipeline
 
+`scripts/generate-formats.ts` currently writes text files only. Its EPUB and
+PDF options do not create release files; Kindle output is not part of this
+command.
+
 ```mermaid
 graph LR
-    A[Markdown Translation] --> B[Converter Package]
-    B --> C[Plain Text<br/>for Web]
-    B --> D[EPUB<br/>for E-readers]
-    B --> E[PDF<br/>for Print]
-    B --> F[MOBI<br/>for Kindle]
-
-    C --> G[DigitalOcean Spaces]
-    G --> H[Web App]
-
-    D --> I[Apple Books]
-    E --> J[Lulu Print]
-    F --> K[Amazon KDP]
+    A[Markdown Translation] --> B[generate:formats book]
+    B --> C[Plain Text]
+    C --> D[sync:spaces book]
+    D --> E[DigitalOcean Spaces]
+    E --> F[Web Reader Source]
 ```
 
 ## 🎯 Publishing Targets

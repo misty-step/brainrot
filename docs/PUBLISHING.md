@@ -50,11 +50,9 @@ Each book contains:
 **Command**: `pnpm generate:formats book [book-slug]`
 **Package**: `@brainrot/converter`
 
-Converts markdown to the formats supported by `scripts/generate-formats.ts`:
-
-- **Text** (`.txt`) - Default output for web reading
-- **EPUB** (`.epub`) - Optional e-reader output
-- **PDF** (`.pdf`) - Optional print output
+`scripts/generate-formats.ts` currently writes **text** (`.txt`) for web reading.
+It accepts `--format epub` and `--format pdf`, but those handlers do not create
+files. EPUB and PDF are not currently generated release artifacts.
 
 Output location: `generated/[book-slug]/`
 
@@ -146,7 +144,7 @@ Publishes to all configured platforms:
 
 ## Automation Scripts
 
-### Generate Text, EPUB, and PDF Formats
+### Generate Text Files
 
 ```bash
 # Single book
