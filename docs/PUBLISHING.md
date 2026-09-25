@@ -1,8 +1,12 @@
-# Publishing Pipeline Documentation
+# Publishing Pipeline Documentation (historical Vercel-era guide)
 
 ## Overview
 
-The Brainrot Publishing House uses a sophisticated multi-platform publishing pipeline that takes Gen Z translations from markdown source files to published books across web, ebook, and print platforms.
+This August 2025 guide records the former Vercel Blob and `pnpm publisher`
+workflow. Its Vercel deployment and retailer-publishing command examples are
+not current operating instructions. The root `package.json` instead defines
+`generate:formats` and `sync:spaces`; no working public site was verified on
+2026-09-25.
 
 ```mermaid
 graph TB
@@ -12,7 +16,7 @@ graph TB
     B --> E[PDF]
     B --> F[MOBI/KPF]
 
-    C -->|sync:blob| G[Vercel Blob Storage]
+    C -->|sync:spaces| G[DigitalOcean Spaces]
     G --> H[Web App]
 
     D --> I[Apple Books]
@@ -43,29 +47,25 @@ Each book contains:
 
 ### 2. Format Generation
 
-**Command**: `pnpm generate:formats [book-slug]`
+**Command**: `pnpm generate:formats book [book-slug]`
 **Package**: `@brainrot/converter`
 
-Converts markdown to multiple formats:
+`scripts/generate-formats.ts` currently writes **text** (`.txt`) for web reading.
+It accepts `--format epub` and `--format pdf`, but those handlers do not create
+files. EPUB and PDF are not currently generated release artifacts.
 
-- **Text** (`.txt`) - For web reading
-- **EPUB** (`.epub`) - For e-readers
-- **PDF** (`.pdf`) - For print (paperback/hardcover variants)
-- **MOBI/KPF** (`.mobi`) - For Kindle
-
-Output location: `content/translations/books/[book-slug]/generated/`
+Output location: `generated/[book-slug]/`
 
 ### 3. Web Distribution
 
-**Command**: `pnpm sync:blob [book-slug]`
-**Automation**: Fully Automated
+**Command**: `pnpm sync:spaces book [book-slug]`
+**Automation**: Available through the repository's content workflows
 
 Process:
 
-1. Text files uploaded to Vercel Blob Storage
-2. Available at: `https://82qos1wlxbd4iq1g.public.blob.vercel-storage.com/books/[slug]/text/[filename]`
-3. Web app fetches content on-demand
-4. Deployed automatically via Vercel on push to main
+1. Generated text files upload to DigitalOcean Spaces
+2. The web app reads from `NEXT_PUBLIC_SPACES_BASE_URL`
+3. Public web delivery remains unverified while the documented site does not resolve
 
 ### 4. Print Publishing
 
@@ -135,7 +135,7 @@ Publishes to all configured platforms:
 
 | Platform     | Automation | Formats      | Distribution | Royalties | Setup Time |
 | ------------ | ---------- | ------------ | ------------ | --------- | ---------- |
-| Web (Vercel) | Full       | Text         | Global       | N/A       | Instant    |
+| Web (Spaces; site unverified) | Content sync | Text | — | N/A | — |
 | Amazon KDP   | Semi       | eBook, Print | Global       | 35-70%    | 24-72h     |
 | Lulu         | Full       | Print        | Global       | Variable  | 24-48h     |
 | IngramSpark  | Manual     | Print        | Bookstores   | 35-45%    | 1-2 weeks  |
@@ -144,36 +144,36 @@ Publishes to all configured platforms:
 
 ## Automation Scripts
 
-### Generate All Formats
+### Generate Text Files
 
 ```bash
 # Single book
-pnpm generate:formats great-gatsby
+pnpm generate:formats book great-gatsby
 
 # All books
-pnpm generate:formats --all
+pnpm generate:formats all
 
 # With verbose output
-pnpm generate:formats great-gatsby --verbose
+pnpm generate:formats book great-gatsby --verbose
 
 # Dry run (no file generation)
-pnpm generate:formats great-gatsby --dry-run
+pnpm generate:formats book great-gatsby --dry-run
 ```
 
-### Sync to Blob Storage
+### Sync to DigitalOcean Spaces
 
 ```bash
 # Single book
-pnpm sync:blob great-gatsby
+pnpm sync:spaces book great-gatsby
 
 # All books
-pnpm sync:blob --all
+pnpm sync:spaces all
 
 # Force re-upload (ignore checksums)
-pnpm sync:blob great-gatsby --force
+pnpm sync:spaces book great-gatsby --force
 
-# Delete orphaned files
-pnpm sync:blob great-gatsby --delete
+# Delete orphaned text files
+pnpm sync:spaces book great-gatsby --delete
 ```
 
 ### Publisher CLI
@@ -203,23 +203,23 @@ pnpm publisher publish-all great-gatsby --mock
 
 ### GitHub Actions Workflows
 
-#### Content Sync (Daily)
+#### Content Sync (Manual)
 
 **File**: `.github/workflows/sync-content.yml`
-**Schedule**: Daily at 5 AM UTC
-**Action**: Syncs all book content to blob storage
+**Trigger**: `workflow_dispatch`
+**Action**: Generates formats and syncs text to DigitalOcean Spaces
 
 #### Book Publishing (On Change)
 
 **File**: `.github/workflows/publish-books.yml`
-**Trigger**: Changes to `content/translations/books/**`
-**Action**: Generates formats and uploads to blob storage
+**Trigger**: Pushes to `main` or `master` changing `content/translations/books/**`
+**Action**: Generates formats and syncs to DigitalOcean Spaces on push; the
+retailer-publishing job is gated to manual `workflow_dispatch`
 
-#### Web Deployment (On Push)
+#### Web Deployment
 
-**File**: `.github/workflows/deploy-web.yml`
-**Trigger**: Push to main branch, changes in `apps/web/**`
-**Action**: Deploys web app to Vercel
+The repository has no `deploy-web.yml`. `.github/workflows/ci.yml` runs quality
+checks on PRs and pushes but does not deploy the web app.
 
 ## Publishing Checklist
 
@@ -233,7 +233,7 @@ pnpm publisher publish-all great-gatsby --mock
 
 ### Format Generation
 
-- [ ] Run `pnpm generate:formats [book]`
+- [ ] Run `pnpm generate:formats book [book]`
 - [ ] Verify text files generated
 - [ ] Check EPUB validity (if using)
 - [ ] Review PDF formatting
@@ -241,7 +241,7 @@ pnpm publisher publish-all great-gatsby --mock
 
 ### Platform Publishing
 
-- [ ] Sync to blob storage for web
+- [ ] Sync generated text to Spaces for web
 - [ ] Publish to KDP (Kindle + Print)
 - [ ] Publish to Lulu (POD)
 - [ ] Submit to IngramSpark (manual)
@@ -420,20 +420,12 @@ pnpm publisher validate great-gatsby
 ## Quick Reference Card
 
 ```bash
-# Complete publishing workflow for a new book
-pnpm generate:formats great-gatsby        # Generate all formats
-pnpm sync:blob great-gatsby              # Upload to web
-pnpm publisher validate great-gatsby     # Pre-flight checks
-pnpm publisher publish-all great-gatsby  # Publish everywhere
-
-# Check status
-pnpm publisher list                      # List all books
-pnpm monitor                            # API usage stats
-cat sync-log.json | jq                  # View sync history
-ls publishing-reports/                  # Publishing history
+# Generate and sync one book (not a live-site or retailer verification)
+pnpm generate:formats book great-gatsby
+pnpm sync:spaces book great-gatsby
 ```
 
 ---
 
-_Last Updated: 2025-08-19_
+_Last Updated: 2026-09-25_
 _Version: 1.0.0_

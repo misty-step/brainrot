@@ -2,6 +2,10 @@
 
 this nextjs app is a total vibe: a reading + audio platform that merges sweet waveforms, text highlighting, chapter/timestamp sharing, and a spool of dope expansions on the horizon. behold:
 
+**Public site (checked 2026-09-25):** `brainrotpublishing.com` and
+`www.brainrotpublishing.com` did not resolve in direct `curl` probes. This
+README describes the source app, not a verified live deployment.
+
 ## features
 
 - **reading room**: pick your translation, pick your chapter, listen to synced audio. your eyeballs read as your ears feast.
@@ -13,7 +17,8 @@ this nextjs app is a total vibe: a reading + audio platform that merges sweet wa
 - **app/reading-room/[slug]**: main reading component. fetches your text, loads audio, manages chapters/timestamps.
 - **hooks & components**: reusable building blocks to handle reading progress, theme toggles, etc.
 - **digitalocean spaces**: assets use the standardized paths under the authoritative Spaces bucket.
-- **env**: `.env.local` holds local-only settings; production settings live in App Platform.
+- **env**: `.env.local` holds local settings; the repository targets App
+  Platform for deployment, but no live deployment was verified.
 
 ## documentation
 
@@ -36,7 +41,7 @@ this nextjs app is a total vibe: a reading + audio platform that merges sweet wa
 - **wavesurfer** for audio waveforms and playback.
 - **digitalocean spaces**: authoritative production asset storage and delivery.
 - **tailwindcss** for speed-coded styling.
-- **vitest** for ultra-fast testing (10x faster than jest).
+- **vitest** for unit and integration testing.
 
 ## running locally
 
@@ -46,11 +51,10 @@ this nextjs app is a total vibe: a reading + audio platform that merges sweet wa
 4. `pnpm dev`
 5. open localhost:3000
 6. test the reading room: try reading-room/the-iliad?c=1&t=30.
-7. explore /checkout to place a pseudo preorder (test mode).
 
 ## testing
 
-we use **Vitest** for ultra-fast testing (previously Jest, but we upgraded for that 10x speed boost):
+from the monorepo root, use these **Vitest** scripts (the web package has a smaller script set):
 
 ```bash
 # run tests in watch mode (recommended for dev)
@@ -78,7 +82,7 @@ pnpm test:ui
 
 we migrated from jest to vitest for:
 
-- **10x faster test execution** (50s → 5s)
+- native test runner instead of Jest configuration
 - **native esm support** (no more transform headaches)
 - **better typescript support** out of the box
 - **hmr for tests** (instant re-runs on save)
@@ -94,30 +98,19 @@ jest.spyOn() → vi.spyOn()
 
 ## scripts
 
-### the magnificent seven
+### `apps/web` package scripts
 
-we've simplified from 74 scripts down to just 7 essentials. no more clutter, just what you need:
+run these commands from `apps/web/`; root package scripts differ:
 
 ```bash
 pnpm dev         # fire up the dev server with turbopack
 pnpm build       # production build with all optimizations
 pnpm test        # run tests in watch mode (vitest)
-pnpm lint        # eslint with next.js rules
+pnpm lint        # currently prints a skip notice
 pnpm format      # auto-format with prettier
 pnpm typecheck   # typescript type checking
 pnpm prettier:fix # direct prettier (alias for format)
 ```
-
-### why so few?
-
-we removed **67 legacy scripts** that were:
-
-- migration scripts (data already migrated)
-- audit/verify scripts (now automated tests)
-- standardization scripts (data already clean)
-- one-time utilities (job's done)
-
-if you need them for reference, they're archived at `/tools/legacy-scripts/` with full documentation.
 
 ### script philosophy
 

@@ -8,11 +8,16 @@ Brainrot Publishing House creates hilarious Gen Z "brainrot" translations of cla
 
 This monorepo contains:
 
-- **Web App**: Next.js reading platform at
-  [brainrotpublishing.com](https://brainrotpublishing.com)
+- **Web App**: Next.js reading platform in `apps/web/` (no reachable public site verified)
 - **Translations**: The actual book translations (our crown jewels)
-- **Publisher**: Automated publishing to Amazon KDP, Lulu, and more
+- **Publisher**: KDP/Lulu CLI code; the top-level `publish` command is not implemented
 - **Converter**: Tools to transform content for different platforms
+
+**Site status (checked 2026-09-25):** Neither `brainrotpublishing.com` nor
+`www.brainrotpublishing.com` resolves in a direct `curl` probe. GitHub's latest
+Preview deployment (2025-11-10) and Production deployment (2025-09-16) are
+marked inactive. The repo has CI but no web deployment workflow; a working
+production deployment has not been verified.
 
 ## ⚠️ CRITICAL: Translation Methodology ⚠️
 
@@ -45,21 +50,21 @@ Brainrot: "so yesterday i was heading down to the piraeus with my boy glaucon (a
 ```
 brainrot/
 ├── apps/
-│   ├── web/                    # Next.js 15 web application
+│   ├── web/                    # Next.js 16 web application
 │   └── publisher/              # CLI for KDP, Lulu, IngramSpark
 ├── content/
 │   └── translations/
 │       └── books/              # All book translations
-│           ├── great-gatsby/   # Each book has brainrot/ and metadata.yaml
+│           ├── great-gatsby/   # Book source and metadata
 │           ├── the-iliad/
-│           └── [8 more books]
+│           └── ...             # Other book directories
 ├── packages/
 │   ├── @brainrot/types/        # Shared TypeScript interfaces
-│   ├── @brainrot/converter/    # Markdown → Text/EPUB/PDF/Kindle
+│   ├── @brainrot/converter/    # Markdown → Text/EPUB/PDF
 │   ├── @brainrot/metadata/     # YAML parsing, ISBN validation
 │   └── @brainrot/templates/    # LaTeX/EPUB/Kindle templates
 ├── scripts/
-│   ├── generate-formats.ts     # Convert books to all formats
+│   ├── generate-formats.ts     # Generate text from book translations
 │   └── sync-translations.ts    # Publish generated text to Spaces
 └── turbo.json                  # Turborepo configuration
 ```
@@ -90,7 +95,7 @@ pnpm dev
 # Or just the web app
 pnpm dev --filter=@brainrot/web
 
-# Build everything (super fast with Turborepo!)
+# Build everything
 pnpm build
 
 # Run tests
@@ -99,7 +104,7 @@ pnpm test
 
 ### Monorepo Benefits
 
-- **⚡ Lightning fast builds** - Turborepo caches everything (174ms rebuilds!)
+- **⚡ Cached builds** - Turborepo caches build tasks
 - **📦 Shared packages** - Reusable code across all apps
 - **🔄 Unified pipeline** - One command to rule them all
 - **🎯 Selective execution** - Work on just what you need
@@ -107,7 +112,7 @@ pnpm test
 
 ## 📖 Available Books
 
-### Currently Translated (8 books, 124 text files)
+### Translation Sources (examples)
 
 - **The Great Gatsby** - _"back when i was a lil sus beta and way more vulnerable to getting absolutely ratio'd by life"_
 - **The Iliad** - _"greek drama hits different when paris catches feelings"_
@@ -117,6 +122,8 @@ pnpm test
 - **Frankenstein** - _"victor creates life then ghosts harder than your crush"_
 - **Declaration of Independence** - _"the colonies said 'we're breaking up with u britain'"_
 - **Simple Sabotage Field Manual** - _"how to troll your workplace (CIA approved)"_
+- **Hamlet** - Five translated acts under `content/translations/books/hamlet/brainrot/`
+- **The Republic** - Translation chapters under `content/translations/books/the-republic/brainrot/`
 
 ### In Progress
 
@@ -126,7 +133,6 @@ pnpm test
 ### Coming Soon
 
 - Pride and Prejudice
-- Hamlet
 - Romeo and Juliet
 - Paradise Lost
 - And 100+ more classics
@@ -149,8 +155,8 @@ pnpm test
 # Development
 pnpm dev                        # Start all apps in dev mode
 pnpm dev --filter=@brainrot/web # Web app only
-pnpm build                      # Build everything (174ms with cache!)
-pnpm lint                       # Lint all packages
+pnpm build                      # Build all workspaces
+pnpm lint                       # Run workspace lint scripts (web/publisher skip)
 
 # Testing (Powered by Vitest)
 pnpm test                       # Run tests in watch mode
@@ -160,45 +166,26 @@ pnpm test:coverage              # Generate coverage report
 pnpm test:watch                 # Alias for pnpm test
 
 # Content Pipeline
-pnpm generate:formats book [book] # Convert one book to release formats
-pnpm generate:formats all         # Process all books
-pnpm sync:spaces book [book]      # Publish one generated book to Spaces
-pnpm sync:spaces all              # Publish all generated books
+pnpm generate:formats book [book] # Generate text for one book
+pnpm generate:formats all         # Generate text for all books
+pnpm sync:spaces book [book]      # Sync one book's text to Spaces
+pnpm sync:spaces all              # Sync all generated text to Spaces
 
-# Publishing
-pnpm publisher list             # List available books
-pnpm publisher validate [book]  # Pre-flight checks
-pnpm publisher publish [book] --platform=lulu  # Publish to Lulu
-pnpm publisher publish [book] --platform=kdp   # Publish to Amazon
-pnpm publisher publish-all [book]              # All platforms
-
-# Utilities
-pnpm vault:pull                # Get latest secrets
 ```
+
+`apps/publisher` has package-level commands; the root has no `publisher` or
+`vault:*` script.
 
 ### Environment Variables
 
-This project uses **dotenv-vault** for secure secret sharing:
-
-```bash
-# First time setup
-pnpm vault:login       # Login to dotenv-vault
-pnpm vault:pull        # Pull encrypted secrets
-
-# Daily workflow
-pnpm vault:pull        # Get latest secrets
-pnpm vault:push        # Share your changes
-```
-
-Manual setup (if not using vault):
+For local development, set only the variables relevant to your task. There
+are no dotenv-vault scripts in the root package.
 
 - Copy `.env.example` to `.env.local`
 - Set `NEXT_PUBLIC_SPACES_BASE_URL` to the authoritative DigitalOcean Spaces bucket
 - Add Spaces credentials only for asset publishing or migration operations
 - Add `LULU_API_KEY` - For print publishing
 - Add `KDP_EMAIL/PASSWORD` - For Amazon publishing
-
-See `docs/DOTENV_VAULT_SETUP.md` for complete setup guide.
 
 ### 🔒 Security Setup
 
@@ -228,9 +215,8 @@ See `docs/SECRETS.md` for rotation procedures.
 
 ### Test Stack
 
-We use **Vitest** for blazing-fast unit and integration testing:
+We use **Vitest** for unit and integration testing:
 
-- **5-10x faster** than Jest
 - **Native ESM support** - No transforms needed
 - **HMR for tests** - Tests re-run instantly on save
 - **Compatible API** - Drop-in Jest replacement
@@ -252,28 +238,19 @@ pnpm test:ui
 pnpm test:coverage
 
 # Test specific packages
-pnpm test --filter=@brainrot/converter
-pnpm test --filter=@brainrot/web
+pnpm --filter @brainrot/converter test
+pnpm --filter @brainrot/web test
 
-# Run specific test files
-pnpm test -- download.test.ts
-pnpm test -- --grep="security"
+# Run a specific test file or test-name pattern
+pnpm exec vitest run apps/web/app/api/download/route.spaces.test.ts
+pnpm exec vitest run -t security
 ```
 
 ### Test Coverage
 
-We maintain **85%+ coverage** across all packages:
-
-```bash
-# Check coverage
-pnpm test:coverage
-
-# Coverage thresholds (enforced in CI)
-# - Branches: 85%
-# - Functions: 85%
-# - Lines: 85%
-# - Statements: 85%
-```
+Coverage is available through `pnpm test:coverage`, but
+`.github/workflows/ci.yml` currently does not enforce a percentage threshold;
+its coverage upload step is commented out.
 
 ### Jest → Vitest Migration
 
@@ -293,7 +270,6 @@ vi.mock("./module");
 
 **Migration benefits:**
 
-- Test execution: ~50s → ~5s (10x speedup)
 - No more `ts-jest` configuration
 - Better TypeScript support out of the box
 - Simpler configuration (single `vitest.config.ts`)
@@ -304,16 +280,17 @@ For migration details, see our [migration guide](docs/TESTING_MIGRATION.md).
 
 ### Philosophy: Less is More
 
-We maintain a **minimalist script structure** focused on essential development tasks. We reduced from 74 scripts to just 7 core scripts in the web app, removing all one-time migration and utility scripts.
+The root and web app expose different scripts; consult their respective
+`package.json` files before running package-level commands.
 
-### Essential Scripts (Web App)
+### Essential Scripts (from `apps/web/`)
 
 ```bash
-# The Magnificent Seven - Everything you actually need
-pnpm dev         # Start dev server with Turbopack (blazing fast HMR)
+# Run from apps/web/ (these are not all root package scripts)
+pnpm dev         # Start dev server with Turbopack
 pnpm build       # Production build with Next.js optimizations
-pnpm test        # Run tests in watch mode with Vitest
-pnpm lint        # ESLint with Next.js rules
+pnpm test        # Run Vitest in watch mode
+pnpm lint        # Currently prints a skip notice
 pnpm format      # Prettier auto-formatting
 pnpm typecheck   # TypeScript type checking
 pnpm prettier:fix # Direct Prettier command (alias for format)
@@ -324,8 +301,8 @@ pnpm prettier:fix # Direct Prettier command (alias for format)
 ```bash
 # Core Development
 pnpm dev         # Start all apps in dev mode (Turborepo)
-pnpm build       # Build all packages (cached, ~13s)
-pnpm lint        # Lint all packages
+pnpm build       # Build all packages via Turborepo
+pnpm lint        # Run workspace lint scripts (web/publisher skip)
 pnpm typecheck   # Type check everything
 pnpm clean       # Nuclear option - clear all caches
 
@@ -336,25 +313,9 @@ pnpm test:ui     # Beautiful Vitest UI
 pnpm test:coverage # Coverage report
 
 # Content & Publishing
-pnpm generate:formats book [book] # Convert one book
-pnpm sync:spaces book [book]      # Publish one generated book to Spaces
+pnpm generate:formats book [book] # Generate one book's text
+pnpm sync:spaces book [book]      # Sync text to Spaces
 ```
-
-### What We Removed (and Why)
-
-We archived **67 legacy scripts** that were:
-
-- **Migration scripts** (45): One-time data migrations now complete
-- **Audit/verify scripts** (15): Replaced with automated tests
-- **Standardization scripts** (10): Data is now standardized
-- **Utility scripts** (7): Either automated or rarely needed
-
-**Why remove them?**
-
-- **Clarity**: New developers see only what matters
-- **Maintenance**: Less scripts = less confusion
-- **Speed**: Faster package.json parsing
-- **Focus**: Essential workflows are obvious
 
 ### Archived Scripts
 
@@ -396,25 +357,22 @@ node --loader tsx scripts/analyze-something.ts
 
 ## 📚 Content Pipeline
 
+`scripts/generate-formats.ts` currently writes text files only. Its EPUB and
+PDF options do not create release files; Kindle output is not part of this
+command.
+
 ```mermaid
 graph LR
-    A[Markdown Translation] --> B[Converter Package]
-    B --> C[Plain Text<br/>for Web]
-    B --> D[EPUB<br/>for E-readers]
-    B --> E[PDF<br/>for Print]
-    B --> F[MOBI<br/>for Kindle]
-
-    C --> G[DigitalOcean Spaces]
-    G --> H[Web App]
-
-    D --> I[Apple Books]
-    E --> J[Lulu Print]
-    F --> K[Amazon KDP]
+    A[Markdown Translation] --> B[generate:formats book]
+    B --> C[Plain Text]
+    C --> D[sync:spaces book]
+    D --> E[DigitalOcean Spaces]
+    E --> F[Web Reader Source]
 ```
 
 ## 🎯 Publishing Targets
 
-- **Web**: DigitalOcean App Platform + Spaces (automatic)
+- **Web**: Configured for DigitalOcean App Platform + Spaces; public URL unverified
 - **Amazon KDP**: Kindle + Paperback (semi-automated)
 - **Lulu**: Print-on-demand (API automated)
 - **IngramSpark**: Bookstores (manual)
@@ -441,7 +399,7 @@ The translations are original creative works. Classic source texts are public do
 
 ## 🔗 Links
 
-- **Web App**: [www.brainrotpublishing.com](https://www.brainrotpublishing.com)
+- **Web App**: `www.brainrotpublishing.com` (currently does not resolve)
 - **GitHub**: [github.com/misty-step/brainrot](https://github.com/misty-step/brainrot)
 - **Discord**: Coming soon
 - **TikTok**: @brainrotpublishing (coming soon)
@@ -460,12 +418,12 @@ This monorepo was successfully migrated from two repositories with full git hist
 ### Common Issues
 
 **Great Gatsby not loading?**
-✅ This has been fixed! All books are pre-processed and uploaded.
+First check site availability: the documented public domain currently does not
+resolve. Book content in the repository is under `content/translations/books/`.
 
 **App Platform deployment failing?**
-Run `pnpm ci:required` locally, then inspect the current DigitalOcean deployment
-log. The production branch is the deployment authority; no repo workflow
-deploys a second copy.
+Run `pnpm ci:required` locally and check deployment state in DigitalOcean App
+Platform. The repository's GitHub Actions CI does not deploy the web app.
 
 ### Build failing?
 
@@ -500,9 +458,9 @@ git log --follow content/translations/[file]
 - [x] Batch processing for all books
 - [x] Mock mode for testing
 
-### Phase 3: Production Launch (Current)
+### Phase 3: Production Launch (public site unavailable)
 
-- [x] Deploy to DigitalOcean App Platform ✅
+- [ ] Restore and verify a reachable production web deployment
 - [ ] Test publishing pipeline with real credentials
 - [ ] Launch first 10 books on all platforms
 - [ ] Set up analytics and monitoring

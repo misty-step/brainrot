@@ -1,8 +1,12 @@
-# Secret Management & Rotation Procedures
+# Secret Management & Rotation Procedures (historical Vercel-era guide)
 
 ## Overview
 
-This document outlines the procedures for managing, rotating, and securing sensitive credentials used in the Brainrot Publishing House monorepo. All team members with access to production systems must follow these procedures.
+This 2025 guide records former Vercel Blob and deployment credentials. Do not
+use its Vercel dashboard or rotation examples as current operational steps:
+the repository now syncs to DigitalOcean Spaces, has no web-deployment
+workflow, and has no verified reachable public site as of 2026-09-25.
+Check the actual `.github/workflows/` inputs for current secret identifiers.
 
 ## Secret Categories
 
@@ -38,11 +42,11 @@ This document outlines the procedures for managing, rotating, and securing sensi
 - **Access**: Repository settings → Secrets and variables → Actions
 - **Naming**: Use exact variable names from `.env.example`
 
-### Production
+### Historical Vercel Production (not current)
 
-- **Location**: Vercel Environment Variables
-- **Access**: Vercel Dashboard → Settings → Environment Variables
-- **Scopes**: Production, Preview, Development
+- **Former location**: Vercel Environment Variables
+- **Former access**: Vercel Dashboard → Settings → Environment Variables
+- **Former scopes**: Production, Preview, Development
 
 ## Rotation Procedures
 

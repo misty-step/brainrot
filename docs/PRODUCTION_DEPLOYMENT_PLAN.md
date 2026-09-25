@@ -3,20 +3,22 @@
 **Project**: Brainrot Publishing House Monorepo  
 **Document Version**: 1.0  
 **Created**: 2025-08-27  
-**Last Updated**: 2025-08-27  
-**Risk Level**: LOW (Post-Security-Patch)
+**Last Updated**: 2026-09-25
+
+**Scope**: Historical Vercel-era plan; not a current deployment runbook
 
 ## Executive Summary
 
-This document provides the comprehensive production deployment plan for the Brainrot Publishing House monorepo. The system is currently 95% complete with security patches deployed and all critical functionality verified.
+This August 2025 plan records the former Vercel deployment procedures. Do not
+run the Vercel deployment or rollback commands below for the current repository;
+its GitHub Actions workflows run CI and content jobs, not a web deploy.
 
-## Current Production Status ✅
+## Observed Site Status (checked 2026-09-25)
 
-- **Production URL**: https://www.brainrotpublishing.com
-- **Status**: LIVE and STABLE
-- **Last Deployment**: August 2025 (security patches active)
-- **Performance**: Homepage loads in ~150ms average
-- **Security**: All vulnerabilities patched, malicious parameter rejection working
+- **Documented URL**: `www.brainrotpublishing.com` (does not resolve in a direct `curl` probe)
+- **Apex domain**: `brainrotpublishing.com` (also does not resolve)
+- **GitHub deployment history**: latest Preview 2025-11-10; latest Production 2025-09-16; both now inactive
+- **Current production state**: No reachable public deployment verified
 
 ## Pre-Deployment Checklist
 
@@ -44,7 +46,7 @@ pnpm audit                     # No security vulnerabilities
 - [ ] Build time under 20 seconds
 - [ ] Test suite completes in <30 seconds
 
-## Deployment Procedures
+## Historical Vercel Deployment Procedures (not current instructions)
 
 ### Standard Production Deployment
 
@@ -167,7 +169,7 @@ git push origin master
 cd apps/web && npx vercel --prod --yes
 ```
 
-**Full rollback procedures**: See [MIGRATION_ROLLBACK_PLAN.md](./MIGRATION_ROLLBACK_PLAN.md)
+**Historical migration rollback example**: See [MIGRATION_ROLLBACK_PLAN.md](./MIGRATION_ROLLBACK_PLAN.md); not a current rollback procedure.
 
 ## Team Notification Procedures
 
@@ -295,11 +297,11 @@ curl -w "%{time_total}" https://www.brainrotpublishing.com/api/download?invalid=
 
 ## Related Documentation
 
-- [Vercel Deployment](./VERCEL_DEPLOYMENT.md) - Detailed deployment configuration
-- [Migration Rollback Plan](./MIGRATION_ROLLBACK_PLAN.md) - Emergency procedures
+- [Repository README](../README.md) - Current source and site status
+- [Migration Rollback Plan](./MIGRATION_ROLLBACK_PLAN.md) - Historical examples, not current instructions
 - [Security Guide](./SECURITY.md) - Security best practices  
-- [Architecture Overview](./ARCHITECTURE.md) - System architecture
-- [Monitoring Setup](./MONITORING.md) - Observability configuration
+- [Architecture Overview](./ARCHITECTURE.md) - Historical architecture diagrams
+- [Monitoring Setup](./MONITORING.md) - Historical monitoring plan
 
 ## Deployment History
 
@@ -317,4 +319,5 @@ curl -w "%{time_total}" https://www.brainrotpublishing.com/api/download?invalid=
 - Don't hesitate to rollback if issues arise
 - Document any lessons learned for future deployments
 
-**This plan is living documentation** - Update based on actual deployment experiences.
+**Historical Vercel-era plan** - See the repository README for the current
+site status; this is not a deployment runbook.
