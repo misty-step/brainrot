@@ -64,7 +64,7 @@ brainrot/
 │   ├── @brainrot/metadata/     # YAML parsing, ISBN validation
 │   └── @brainrot/templates/    # LaTeX/EPUB/Kindle templates
 ├── scripts/
-│   ├── generate-formats.ts     # Convert books to all formats
+│   ├── generate-formats.ts     # Generate text from book translations
 │   └── sync-translations.ts    # Publish generated text to Spaces
 └── turbo.json                  # Turborepo configuration
 ```
@@ -166,10 +166,10 @@ pnpm test:coverage              # Generate coverage report
 pnpm test:watch                 # Alias for pnpm test
 
 # Content Pipeline
-pnpm generate:formats book [book] # Convert one book to release formats
-pnpm generate:formats all         # Process all books
-pnpm sync:spaces book [book]      # Publish one generated book to Spaces
-pnpm sync:spaces all              # Publish all generated books
+pnpm generate:formats book [book] # Generate text for one book
+pnpm generate:formats all         # Generate text for all books
+pnpm sync:spaces book [book]      # Sync one book's text to Spaces
+pnpm sync:spaces all              # Sync all generated text to Spaces
 
 ```
 
@@ -313,8 +313,8 @@ pnpm test:ui     # Beautiful Vitest UI
 pnpm test:coverage # Coverage report
 
 # Content & Publishing
-pnpm generate:formats book [book] # Convert one book
-pnpm sync:spaces book [book]      # Publish one generated book to Spaces
+pnpm generate:formats book [book] # Generate one book's text
+pnpm sync:spaces book [book]      # Sync text to Spaces
 ```
 
 ### Archived Scripts
