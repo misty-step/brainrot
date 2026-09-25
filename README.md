@@ -242,7 +242,7 @@ pnpm --filter @brainrot/converter test
 pnpm --filter @brainrot/web test
 
 # Run a specific test file or test-name pattern
-pnpm exec vitest run download.test.ts
+pnpm exec vitest run apps/web/app/api/download/route.spaces.test.ts
 pnpm exec vitest run -t security
 ```
 
