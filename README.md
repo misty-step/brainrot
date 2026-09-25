@@ -302,7 +302,7 @@ pnpm prettier:fix # Direct Prettier command (alias for format)
 # Core Development
 pnpm dev         # Start all apps in dev mode (Turborepo)
 pnpm build       # Build all packages via Turborepo
-pnpm lint        # Lint all packages
+pnpm lint        # Run workspace lint scripts (web/publisher skip)
 pnpm typecheck   # Type check everything
 pnpm clean       # Nuclear option - clear all caches
 
