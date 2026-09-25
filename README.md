@@ -50,17 +50,17 @@ Brainrot: "so yesterday i was heading down to the piraeus with my boy glaucon (a
 ```
 brainrot/
 ├── apps/
-│   ├── web/                    # Next.js 15 web application
+│   ├── web/                    # Next.js 16 web application
 │   └── publisher/              # CLI for KDP, Lulu, IngramSpark
 ├── content/
 │   └── translations/
 │       └── books/              # All book translations
-│           ├── great-gatsby/   # Each book has brainrot/ and metadata.yaml
+│           ├── great-gatsby/   # Book source and metadata
 │           ├── the-iliad/
-│           └── [8 more books]
+│           └── ...             # Other book directories
 ├── packages/
 │   ├── @brainrot/types/        # Shared TypeScript interfaces
-│   ├── @brainrot/converter/    # Markdown → Text/EPUB/PDF/Kindle
+│   ├── @brainrot/converter/    # Markdown → Text/EPUB/PDF
 │   ├── @brainrot/metadata/     # YAML parsing, ISBN validation
 │   └── @brainrot/templates/    # LaTeX/EPUB/Kindle templates
 ├── scripts/
@@ -112,7 +112,7 @@ pnpm test
 
 ## 📖 Available Books
 
-### Currently Translated (8 books, 124 text files)
+### Translation Sources (examples)
 
 - **The Great Gatsby** - _"back when i was a lil sus beta and way more vulnerable to getting absolutely ratio'd by life"_
 - **The Iliad** - _"greek drama hits different when paris catches feelings"_
@@ -122,6 +122,8 @@ pnpm test
 - **Frankenstein** - _"victor creates life then ghosts harder than your crush"_
 - **Declaration of Independence** - _"the colonies said 'we're breaking up with u britain'"_
 - **Simple Sabotage Field Manual** - _"how to troll your workplace (CIA approved)"_
+- **Hamlet** - Five translated acts under `content/translations/books/hamlet/brainrot/`
+- **The Republic** - Translation chapters under `content/translations/books/the-republic/brainrot/`
 
 ### In Progress
 
@@ -131,7 +133,6 @@ pnpm test
 ### Coming Soon
 
 - Pride and Prejudice
-- Hamlet
 - Romeo and Juliet
 - Paradise Lost
 - And 100+ more classics
@@ -214,9 +215,8 @@ See `docs/SECRETS.md` for rotation procedures.
 
 ### Test Stack
 
-We use **Vitest** for blazing-fast unit and integration testing:
+We use **Vitest** for unit and integration testing:
 
-- **5-10x faster** than Jest
 - **Native ESM support** - No transforms needed
 - **HMR for tests** - Tests re-run instantly on save
 - **Compatible API** - Drop-in Jest replacement
@@ -238,28 +238,19 @@ pnpm test:ui
 pnpm test:coverage
 
 # Test specific packages
-pnpm test --filter=@brainrot/converter
-pnpm test --filter=@brainrot/web
+pnpm --filter @brainrot/converter test
+pnpm --filter @brainrot/web test
 
-# Run specific test files
-pnpm test -- download.test.ts
-pnpm test -- --grep="security"
+# Run a specific test file or test-name pattern
+pnpm exec vitest run download.test.ts
+pnpm exec vitest run -t security
 ```
 
 ### Test Coverage
 
-We maintain **85%+ coverage** across all packages:
-
-```bash
-# Check coverage
-pnpm test:coverage
-
-# Coverage thresholds (enforced in CI)
-# - Branches: 85%
-# - Functions: 85%
-# - Lines: 85%
-# - Statements: 85%
-```
+Coverage is available through `pnpm test:coverage`, but
+`.github/workflows/ci.yml` currently does not enforce a percentage threshold;
+its coverage upload step is commented out.
 
 ### Jest → Vitest Migration
 
@@ -279,7 +270,6 @@ vi.mock("./module");
 
 **Migration benefits:**
 
-- Test execution: ~50s → ~5s (10x speedup)
 - No more `ts-jest` configuration
 - Better TypeScript support out of the box
 - Simpler configuration (single `vitest.config.ts`)
@@ -326,22 +316,6 @@ pnpm test:coverage # Coverage report
 pnpm generate:formats book [book] # Convert one book
 pnpm sync:spaces book [book]      # Publish one generated book to Spaces
 ```
-
-### What We Removed (and Why)
-
-We archived **67 legacy scripts** that were:
-
-- **Migration scripts** (45): One-time data migrations now complete
-- **Audit/verify scripts** (15): Replaced with automated tests
-- **Standardization scripts** (10): Data is now standardized
-- **Utility scripts** (7): Either automated or rarely needed
-
-**Why remove them?**
-
-- **Clarity**: New developers see only what matters
-- **Maintenance**: Less scripts = less confusion
-- **Speed**: Faster package.json parsing
-- **Focus**: Essential workflows are obvious
 
 ### Archived Scripts
 
