@@ -145,11 +145,11 @@ For critical zero-day vulnerabilities:
    gh pr merge [PR-NUMBER] --admin --squash
    ```
 
-2. **Immediate Deployment**
-   ```bash
-   # Force production deployment
-   cd apps/web && npx vercel --prod --yes
-   ```
+2. **Production Deployment**
+   This repository has no web-deployment workflow, and the documented domain
+   did not resolve on 2026-09-25. Verify the actual deployment target and
+   operator procedure before attempting a production release; the former
+   `npx vercel --prod` command is not a current deployment step.
 
 3. **Post-merge Validation**
    ```bash
@@ -218,10 +218,10 @@ Add custom labels for different security update types:
 ### CI/CD Pipeline
 - **Build Integration**: Security updates trigger full CI pipeline
 - **Test Coverage**: Security patches verified by existing test suite
-- **Deployment**: Auto-deployment to staging, manual to production
+- **Deployment**: No web-deployment workflow exists in this repository
 
 ### Monitoring Systems
-- **Vercel Analytics**: Performance impact monitoring
+- **Public Site**: Availability not verified; the documented domain fails DNS lookup
 - **GitHub Security**: Vulnerability tracking and management
 - **Custom Monitoring**: Production health checks post-update
 

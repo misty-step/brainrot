@@ -2,7 +2,11 @@
 
 ## Overview
 
-Brainrot Publishing House is a Turborepo-based monorepo that publishes Gen Z "brainrot" translations of classic literature across multiple channels (web, ebook, print). This document provides visual representations of the system architecture.
+Brainrot Publishing House is a Turborepo-based monorepo for Gen Z translations
+of classic literature. These diagrams include historical Vercel Blob and
+Vercel hosting designs; they do not describe a verified live deployment.
+Current source uses DigitalOcean Spaces (`NEXT_PUBLIC_SPACES_BASE_URL`), and
+the documented public domain did not resolve on 2026-09-25.
 
 ## Monorepo Structure
 
@@ -161,7 +165,7 @@ sequenceDiagram
     CLI-->>Dev: Publishing Complete 🚀
 ```
 
-## Deployment Architecture
+## Historical Vercel Deployment Architecture (not current)
 
 ```mermaid
 graph TB

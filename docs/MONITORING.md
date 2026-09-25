@@ -1,21 +1,24 @@
-# Production Monitoring & Alerting Setup
+# Historical Production Monitoring & Alerting Setup
 
 **Project**: Brainrot Publishing House Monorepo  
 **Document Version**: 1.0  
 **Created**: 2025-08-27  
-**Status**: Active Monitoring Configured
+**Status**: Historical Vercel-era plan; active monitoring not verified
 
 ## Monitoring Overview
 
-This document outlines the comprehensive monitoring and alerting strategy for the Brainrot Publishing House production environment.
+The documented public domain (`www.brainrotpublishing.com`) failed DNS lookup
+on 2026-09-25. The Vercel dashboard and alert examples below describe the
+previous setup; they do not establish monitoring of a live deployment.
+The repo's `scripts/health-check-production.sh` targets that unreachable domain.
 
-## Current Monitoring Stack
+## Historical Monitoring Stack
 
-### 1. Vercel Built-in Monitoring
+### 1. Vercel Built-in Monitoring (historical)
 - **Analytics Dashboard**: https://vercel.com/moomooskycow/brainrot-publishing-house/analytics
-- **Function Logs**: Real-time serverless function monitoring
-- **Build Monitoring**: Deployment success/failure tracking
-- **Performance Metrics**: Core Web Vitals, response times
+- **Function Logs**: Historical serverless function monitoring
+- **Build Monitoring**: Historical deployment success/failure tracking
+- **Performance Metrics**: Historical Core Web Vitals and response times
 
 ### 2. Application Health Monitoring
 - **Health Check Script**: `scripts/health-check-production.sh`
@@ -137,10 +140,9 @@ fi
 
 ## Monitoring Tools & Integration
 
-### Vercel Analytics
+### Historical Vercel Analytics
 ```javascript
-// Already integrated via Vercel dashboard
-// Tracks:
+// Vercel-era dashboard example; not verified for a current live deployment
 // - Page views and user sessions
 // - Core Web Vitals (LCP, FID, CLS)
 // - Geographic distribution
@@ -327,4 +329,5 @@ Key sections:
 - Document all incidents for continuous improvement
 - Test monitoring systems regularly
 
-**This monitoring strategy is living documentation** - Update based on operational experience and new requirements.
+**Historical monitoring plan only** - The current public deployment and
+monitoring configuration have not been verified.

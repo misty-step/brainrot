@@ -1,10 +1,11 @@
-# GitHub Actions Secrets Configuration
+# GitHub Actions Secrets Configuration (historical Vercel-era inventory)
 
-## Required Secrets for CI/CD Pipeline
+This is not a current secret requirements checklist. The repository has no
+`deploy-web.yml`; `sync-content.yml` and `publish-books.yml` use DigitalOcean
+Spaces inputs, and `ci.yml` runs quality checks. Consult the actual workflows
+before configuring secrets; the Vercel/Blob instructions below are historical.
 
-This document lists all GitHub Actions secrets that need to be configured for the Brainrot monorepo CI/CD pipeline to function properly.
-
-## 🚨 Critical Secrets (Required for Basic Functionality)
+## Historical Secrets List
 
 ### 1. BLOB_READ_WRITE_TOKEN
 
@@ -160,7 +161,7 @@ done < secrets.env
 rm secrets.env
 ```
 
-## Priority Order for Configuration
+## Historical Priority Order (not current requirements)
 
 1. **First** (Required for basic operation):
    - BLOB_READ_WRITE_TOKEN
@@ -227,11 +228,8 @@ gh run list --repo phrazzld/brainrot
 - Ensure VERCEL_TOKEN has full access permissions
 - Check if the project is linked correctly
 
-## Next Steps
+## Current Use
 
-1. Add the critical secrets (1-4) first
-2. Test the deployment workflow
-3. Add publishing secrets if using automated publishing
-4. Configure notifications as desired
-
-Remember: These secrets enable the full automation pipeline. Without them, you'll need to perform many operations manually.
+Consult `.github/workflows/` for the actual required secret names before
+configuring CI or publishing. The historical Vercel entries above do not
+establish a currently linked project or deployment workflow.

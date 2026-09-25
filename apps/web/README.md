@@ -2,6 +2,10 @@
 
 this nextjs app is a total vibe: a reading + audio platform that merges sweet waveforms, text highlighting, chapter/timestamp sharing, and a spool of dope expansions on the horizon. behold:
 
+**Public site (checked 2026-09-25):** `brainrotpublishing.com` and
+`www.brainrotpublishing.com` did not resolve in direct `curl` probes. This
+README describes the source app, not a verified live deployment.
+
 ## features
 
 - **reading room**: pick your translation, pick your chapter, listen to synced audio. your eyeballs read as your ears feast.
@@ -13,7 +17,8 @@ this nextjs app is a total vibe: a reading + audio platform that merges sweet wa
 - **app/reading-room/[slug]**: main reading component. fetches your text, loads audio, manages chapters/timestamps.
 - **hooks & components**: reusable building blocks to handle reading progress, theme toggles, etc.
 - **digitalocean spaces**: assets use the standardized paths under the authoritative Spaces bucket.
-- **env**: `.env.local` holds local-only settings; production settings live in App Platform.
+- **env**: `.env.local` holds local settings; the repository targets App
+  Platform for deployment, but no live deployment was verified.
 
 ## documentation
 

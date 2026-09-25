@@ -8,11 +8,16 @@ Brainrot Publishing House creates hilarious Gen Z "brainrot" translations of cla
 
 This monorepo contains:
 
-- **Web App**: Next.js reading platform at
-  [brainrotpublishing.com](https://brainrotpublishing.com)
+- **Web App**: Next.js reading platform in `apps/web/` (no reachable public site verified)
 - **Translations**: The actual book translations (our crown jewels)
-- **Publisher**: Automated publishing to Amazon KDP, Lulu, and more
+- **Publisher**: KDP/Lulu CLI code; the top-level `publish` command is not implemented
 - **Converter**: Tools to transform content for different platforms
+
+**Site status (checked 2026-09-25):** Neither `brainrotpublishing.com` nor
+`www.brainrotpublishing.com` resolves in a direct `curl` probe. GitHub's latest
+Preview deployment (2025-11-10) and Production deployment (2025-09-16) are
+marked inactive. The repo has CI but no web deployment workflow; a working
+production deployment has not been verified.
 
 ## ⚠️ CRITICAL: Translation Methodology ⚠️
 
@@ -90,7 +95,7 @@ pnpm dev
 # Or just the web app
 pnpm dev --filter=@brainrot/web
 
-# Build everything (super fast with Turborepo!)
+# Build everything
 pnpm build
 
 # Run tests
@@ -99,7 +104,7 @@ pnpm test
 
 ### Monorepo Benefits
 
-- **⚡ Lightning fast builds** - Turborepo caches everything (174ms rebuilds!)
+- **⚡ Cached builds** - Turborepo caches build tasks
 - **📦 Shared packages** - Reusable code across all apps
 - **🔄 Unified pipeline** - One command to rule them all
 - **🎯 Selective execution** - Work on just what you need
@@ -149,8 +154,8 @@ pnpm test
 # Development
 pnpm dev                        # Start all apps in dev mode
 pnpm dev --filter=@brainrot/web # Web app only
-pnpm build                      # Build everything (174ms with cache!)
-pnpm lint                       # Lint all packages
+pnpm build                      # Build all workspaces
+pnpm lint                       # Run workspace lint scripts (web/publisher skip)
 
 # Testing (Powered by Vitest)
 pnpm test                       # Run tests in watch mode
@@ -165,40 +170,21 @@ pnpm generate:formats all         # Process all books
 pnpm sync:spaces book [book]      # Publish one generated book to Spaces
 pnpm sync:spaces all              # Publish all generated books
 
-# Publishing
-pnpm publisher list             # List available books
-pnpm publisher validate [book]  # Pre-flight checks
-pnpm publisher publish [book] --platform=lulu  # Publish to Lulu
-pnpm publisher publish [book] --platform=kdp   # Publish to Amazon
-pnpm publisher publish-all [book]              # All platforms
-
-# Utilities
-pnpm vault:pull                # Get latest secrets
 ```
+
+`apps/publisher` has package-level commands; the root has no `publisher` or
+`vault:*` script.
 
 ### Environment Variables
 
-This project uses **dotenv-vault** for secure secret sharing:
-
-```bash
-# First time setup
-pnpm vault:login       # Login to dotenv-vault
-pnpm vault:pull        # Pull encrypted secrets
-
-# Daily workflow
-pnpm vault:pull        # Get latest secrets
-pnpm vault:push        # Share your changes
-```
-
-Manual setup (if not using vault):
+For local development, set only the variables relevant to your task. There
+are no dotenv-vault scripts in the root package.
 
 - Copy `.env.example` to `.env.local`
 - Set `NEXT_PUBLIC_SPACES_BASE_URL` to the authoritative DigitalOcean Spaces bucket
 - Add Spaces credentials only for asset publishing or migration operations
 - Add `LULU_API_KEY` - For print publishing
 - Add `KDP_EMAIL/PASSWORD` - For Amazon publishing
-
-See `docs/DOTENV_VAULT_SETUP.md` for complete setup guide.
 
 ### 🔒 Security Setup
 
@@ -304,16 +290,17 @@ For migration details, see our [migration guide](docs/TESTING_MIGRATION.md).
 
 ### Philosophy: Less is More
 
-We maintain a **minimalist script structure** focused on essential development tasks. We reduced from 74 scripts to just 7 core scripts in the web app, removing all one-time migration and utility scripts.
+The root and web app expose different scripts; consult their respective
+`package.json` files before running package-level commands.
 
-### Essential Scripts (Web App)
+### Essential Scripts (from `apps/web/`)
 
 ```bash
-# The Magnificent Seven - Everything you actually need
-pnpm dev         # Start dev server with Turbopack (blazing fast HMR)
+# Run from apps/web/ (these are not all root package scripts)
+pnpm dev         # Start dev server with Turbopack
 pnpm build       # Production build with Next.js optimizations
-pnpm test        # Run tests in watch mode with Vitest
-pnpm lint        # ESLint with Next.js rules
+pnpm test        # Run Vitest in watch mode
+pnpm lint        # Currently prints a skip notice
 pnpm format      # Prettier auto-formatting
 pnpm typecheck   # TypeScript type checking
 pnpm prettier:fix # Direct Prettier command (alias for format)
@@ -324,7 +311,7 @@ pnpm prettier:fix # Direct Prettier command (alias for format)
 ```bash
 # Core Development
 pnpm dev         # Start all apps in dev mode (Turborepo)
-pnpm build       # Build all packages (cached, ~13s)
+pnpm build       # Build all packages via Turborepo
 pnpm lint        # Lint all packages
 pnpm typecheck   # Type check everything
 pnpm clean       # Nuclear option - clear all caches
@@ -414,7 +401,7 @@ graph LR
 
 ## 🎯 Publishing Targets
 
-- **Web**: DigitalOcean App Platform + Spaces (automatic)
+- **Web**: Configured for DigitalOcean App Platform + Spaces; public URL unverified
 - **Amazon KDP**: Kindle + Paperback (semi-automated)
 - **Lulu**: Print-on-demand (API automated)
 - **IngramSpark**: Bookstores (manual)
@@ -441,7 +428,7 @@ The translations are original creative works. Classic source texts are public do
 
 ## 🔗 Links
 
-- **Web App**: [www.brainrotpublishing.com](https://www.brainrotpublishing.com)
+- **Web App**: `www.brainrotpublishing.com` (currently does not resolve)
 - **GitHub**: [github.com/misty-step/brainrot](https://github.com/misty-step/brainrot)
 - **Discord**: Coming soon
 - **TikTok**: @brainrotpublishing (coming soon)
@@ -460,12 +447,12 @@ This monorepo was successfully migrated from two repositories with full git hist
 ### Common Issues
 
 **Great Gatsby not loading?**
-✅ This has been fixed! All books are pre-processed and uploaded.
+First check site availability: the documented public domain currently does not
+resolve. Book content in the repository is under `content/translations/books/`.
 
 **App Platform deployment failing?**
-Run `pnpm ci:required` locally, then inspect the current DigitalOcean deployment
-log. The production branch is the deployment authority; no repo workflow
-deploys a second copy.
+Run `pnpm ci:required` locally and check deployment state in DigitalOcean App
+Platform. The repository's GitHub Actions CI does not deploy the web app.
 
 ### Build failing?
 
@@ -500,9 +487,9 @@ git log --follow content/translations/[file]
 - [x] Batch processing for all books
 - [x] Mock mode for testing
 
-### Phase 3: Production Launch (Current)
+### Phase 3: Production Launch (public site unavailable)
 
-- [x] Deploy to DigitalOcean App Platform ✅
+- [ ] Restore and verify a reachable production web deployment
 - [ ] Test publishing pipeline with real credentials
 - [ ] Launch first 10 books on all platforms
 - [ ] Set up analytics and monitoring

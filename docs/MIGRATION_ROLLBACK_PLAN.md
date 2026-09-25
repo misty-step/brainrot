@@ -1,13 +1,18 @@
-# Migration Rollback Plan
+# Historical Migration Rollback Plan (not current instructions)
 
 ## Brainrot Publishing House Monorepo Migration
 
 **Document Version**: 1.0  
 **Created**: 2025-08-19  
 **Risk Level**: MEDIUM  
-**Recovery Time Objective**: < 2 hours
+**Recovery Time Objective (historical)**: < 2 hours
 
-## Quick Rollback Commands
+This August 2025 migration plan is retained as history. Its Vercel rollback,
+local checkout deletion, and force-push commands below are not valid for the
+current repository; do not execute them. The documented production domain
+did not resolve on 2026-09-25, so no live rollback target was verified.
+
+## Historical Rollback Example (do not run)
 
 ```bash
 # EMERGENCY ROLLBACK (if critical failure)
@@ -311,4 +316,4 @@ md5sum content/translations/books/*/brainrot/*.md
 
 **Remember**: A successful rollback is better than a broken production system. Don't hesitate to rollback if confidence is low.
 
-**This plan is a living document** - Update it based on actual rollback experiences.
+**Historical record only** - This plan is not a current rollback runbook.
