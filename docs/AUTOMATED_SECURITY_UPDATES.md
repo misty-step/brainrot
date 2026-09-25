@@ -232,10 +232,10 @@ Add custom labels for different security update types:
 
 ## Related Documentation
 
-- [Production Deployment Plan](./PRODUCTION_DEPLOYMENT_PLAN.md) - Deployment procedures
+- [Production Deployment Plan](./PRODUCTION_DEPLOYMENT_PLAN.md) - Historical Vercel-era plan
 - [Security Guide](./SECURITY.md) - General security practices
-- [Monitoring Setup](./MONITORING.md) - System monitoring and alerting
-- [GitHub Actions Secrets](./GITHUB_ACTIONS_SECRETS.md) - CI/CD configuration
+- [Monitoring Setup](./MONITORING.md) - Historical monitoring plan
+- [GitHub Actions Secrets](./GITHUB_ACTIONS_SECRETS.md) - Historical Vercel-era inventory
 
 ## Emergency Contacts
 

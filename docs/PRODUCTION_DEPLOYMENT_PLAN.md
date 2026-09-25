@@ -169,7 +169,7 @@ git push origin master
 cd apps/web && npx vercel --prod --yes
 ```
 
-**Full rollback procedures**: See [MIGRATION_ROLLBACK_PLAN.md](./MIGRATION_ROLLBACK_PLAN.md)
+**Historical migration rollback example**: See [MIGRATION_ROLLBACK_PLAN.md](./MIGRATION_ROLLBACK_PLAN.md); not a current rollback procedure.
 
 ## Team Notification Procedures
 
@@ -298,10 +298,10 @@ curl -w "%{time_total}" https://www.brainrotpublishing.com/api/download?invalid=
 ## Related Documentation
 
 - [Repository README](../README.md) - Current source and site status
-- [Migration Rollback Plan](./MIGRATION_ROLLBACK_PLAN.md) - Emergency procedures
+- [Migration Rollback Plan](./MIGRATION_ROLLBACK_PLAN.md) - Historical examples, not current instructions
 - [Security Guide](./SECURITY.md) - Security best practices  
-- [Architecture Overview](./ARCHITECTURE.md) - System architecture
-- [Monitoring Setup](./MONITORING.md) - Observability configuration
+- [Architecture Overview](./ARCHITECTURE.md) - Historical architecture diagrams
+- [Monitoring Setup](./MONITORING.md) - Historical monitoring plan
 
 ## Deployment History
 
