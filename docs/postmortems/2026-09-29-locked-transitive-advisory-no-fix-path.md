@@ -100,8 +100,11 @@ check on `master`, so a new advisory blocks the merge. It fails when:
   `scripts/dependency-advisories-baseline.json` (it prints package, dependency
   path, patched range and the fix path);
 - a baselined advisory no longer applies, so the baseline can only shrink;
-- the audit response is missing or unparseable, so an unreachable or changed
-  endpoint cannot pass.
+- on a pull request, the baseline lists an entry the base branch does not, so an
+  advisory cannot be silenced by adding it to the baseline (the `advisories` job
+  fetches the base branch and sets `ADVISORY_BASELINE_BASE_REF`);
+- the audit response is missing, unparseable or not an advisories object, so an
+  unreachable or changed endpoint cannot pass.
 
 The baseline exists because 61 other advisory/package pairs are already open;
 a check that failed on all of them could not be enabled without a large
@@ -112,8 +115,9 @@ Proof the original path is closed: against the pre-fix lockfile the check exits
 1 listing all three `ip-address` advisories with the `puppeteer > ... > socks`
 path; against the fixed lockfile it exits 0.
 `scripts/check-dependency-advisories.test.ts` rejects a report shaped like the
-MIS-191 advisory, rejects a stale baseline entry and rejects an unrecognised
-report.
+MIS-191 advisory, a stale baseline entry, baseline growth and an unrecognised
+report. Smoke runs against temporary base refs confirmed growth and an
+unavailable base ref both exit 1.
 
 Across Misty Step repositories: this is the third repository with a gate of
 this shape (misty-step/misty-step `advisories:check` and linejam's
@@ -135,6 +139,10 @@ Residual classes still possible, not error-proofed:
 
 - A new advisory published between merges fails the next unrelated build until
   someone adds an override. That is the intended trade for a fail-closed check.
+- An advisory with no patched version cannot be fixed by an override, and the
+  baseline may not grow, so the gate stays red until the parent is replaced or
+  the gate itself is changed in review. That is deliberate: silencing needs a
+  reviewed change to the gate.
 - The 61 baselined pairs may still fail their Dependabot security jobs and can
   still page the alert intake when Dependabot re-evaluates them; the `undici`
   and `brace-expansion` jobs were already failing on 2026-09-16.
