@@ -10,7 +10,9 @@
  *
  * The baseline is a ratchet, not a waiver list: it can only shrink. A new
  * advisory fails the build; a baselined advisory that has been fixed also fails
- * it until the entry is deleted.
+ * it until the entry is deleted; and on a pull request (with
+ * ADVISORY_BASELINE_BASE_REF set) an entry the base branch does not already
+ * list fails, so silencing an advisory means changing this gate in review.
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -63,7 +65,8 @@ function parseReport(report: unknown): AuditReport {
     typeof report !== "object" ||
     !("advisories" in report) ||
     !report.advisories ||
-    typeof report.advisories !== "object"
+    typeof report.advisories !== "object" ||
+    Array.isArray(report.advisories)
   ) {
     throw new Error("audit report has no advisories object");
   }
@@ -115,8 +118,54 @@ export function diffAdvisories(
   };
 }
 
+/** Baseline keys present in `current` but not in `base`. */
+export function baselineGrowth(
+  current: readonly string[],
+  base: readonly string[],
+): string[] {
+  const known = new Set(base);
+  return current.filter((key) => !known.has(key));
+}
+
+/** The baseline at `ref`, or null when the base branch has none yet. */
+function readBaseBaseline(ref: string): string[] | null {
+  if (spawnSync("git", ["rev-parse", "--verify", ref]).status !== 0) {
+    throw new Error(`base ref ${ref} is not available`);
+  }
+  const spec = `${ref}:${BASELINE_PATH}`;
+  if (spawnSync("git", ["cat-file", "-e", spec]).status !== 0) return null;
+
+  const result = spawnSync("git", ["show", spec], { encoding: "utf8" });
+  if (result.status !== 0) {
+    throw new Error(`cannot read ${spec}: ${result.stderr}`);
+  }
+  return JSON.parse(result.stdout);
+}
+
 function main(): void {
   const baseline: string[] = JSON.parse(readFileSync(BASELINE_PATH, "utf8"));
+
+  // On a pull request the baseline may only shrink relative to the base branch.
+  const baseRef = process.env.ADVISORY_BASELINE_BASE_REF;
+  if (baseRef) {
+    let grown: string[];
+    try {
+      const base = readBaseBaseline(baseRef);
+      grown = base ? baselineGrowth(baseline, base) : [];
+    } catch (error) {
+      console.error(`dependency-advisories: ${(error as Error).message}`);
+      process.exit(1);
+    }
+    if (grown.length > 0) {
+      console.error(
+        `${BASELINE_PATH} may only shrink; these entries are new against ${baseRef}:`,
+      );
+      for (const key of grown) console.error(`- ${key}`);
+      console.error(REMEDIATION);
+      process.exit(1);
+    }
+  }
+
   const result = spawnSync("pnpm", ["audit", "--json"], {
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,

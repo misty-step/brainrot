@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { diffAdvisories } from "./check-dependency-advisories";
+import { baselineGrowth, diffAdvisories } from "./check-dependency-advisories";
 
 // Shaped like `pnpm audit --json` on the MIS-191 lockfile: ip-address 10.1.0
 // is locked under puppeteer > proxy-agent > socks-proxy-agent > socks, which
@@ -61,5 +61,19 @@ describe("diffAdvisories", () => {
       "no advisories",
     );
     expect(() => diffAdvisories(null, [])).toThrow("no advisories");
+    expect(() => diffAdvisories({ advisories: [] }, [])).toThrow(
+      "no advisories",
+    );
+  });
+});
+
+describe("baselineGrowth", () => {
+  it("reports only entries the base branch does not list, so silencing an advisory fails", () => {
+    expect(baselineGrowth(["a undici", ipAddressKey], ["a undici"])).toEqual([
+      ipAddressKey,
+    ]);
+    expect(baselineGrowth(["a undici"], ["a undici", ipAddressKey])).toEqual(
+      [],
+    );
   });
 });

@@ -101,7 +101,15 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
+      - name: Fetch base branch for the baseline ratchet
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git fetch --no-tags --depth=1 origin "$BASE_REF"
+
       - name: Check locked dependencies for advisories
+        env:
+          ADVISORY_BASELINE_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
         run: pnpm ci:required -- advisories
 
   build:
