@@ -13,6 +13,7 @@ overrides:
   tar-fs: ^3.1.1
   tar-stream: ^3.1.7
   glob: ^11.1.0
+  ip-address: ^10.5.1
 
 importers:
 
@@ -7262,8 +7263,8 @@ packages:
       side-channel: 1.1.0
     dev: true
 
-  /ip-address@10.1.0:
-    resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
+  /ip-address@10.7.2:
+    resolution: {integrity: sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==}
     engines: {node: '>= 12'}
     dev: true
 
@@ -9213,7 +9214,7 @@ packages:
     resolution: {integrity: sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
     dependencies:
-      ip-address: 10.1.0
+      ip-address: 10.7.2
       smart-buffer: 4.2.0
     dev: true
 
