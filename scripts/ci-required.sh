@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'USAGE'
-Usage: scripts/ci-required.sh [all|lint|typecheck|test|validate|build]
+Usage: scripts/ci-required.sh [all|lint|typecheck|test|validate|advisories|build]
 
 Runs Brainrot's required PR gate lanes through repo-owned commands.
 USAGE
@@ -31,6 +31,10 @@ run_validate() {
   pnpm validate:all
 }
 
+run_advisories() {
+  pnpm advisories:check
+}
+
 run_build() {
   NODE_ENV=production pnpm build
 }
@@ -41,6 +45,7 @@ case "${lane}" in
     run_typecheck
     run_test
     run_validate
+    run_advisories
     run_build
     ;;
   lint)
@@ -54,6 +59,9 @@ case "${lane}" in
     ;;
   validate)
     run_validate
+    ;;
+  advisories)
+    run_advisories
     ;;
   build)
     run_build

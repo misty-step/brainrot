@@ -25,7 +25,8 @@
     "generate:formats": "tsx scripts/generate-formats.ts",
     "sync:spaces": "tsx scripts/sync-translations.ts",
     "validate": "tsx scripts/validate-translations.ts",
-    "validate:all": "tsx scripts/validate-translations.ts all --verbose"
+    "validate:all": "tsx scripts/validate-translations.ts all --verbose",
+    "advisories:check": "tsx scripts/check-dependency-advisories.ts"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -75,7 +76,8 @@
       "@playwright/test": "^1.56.1",
       "tar-fs": "^3.1.1",
       "tar-stream": "^3.1.7",
-      "glob": "^11.1.0"
+      "glob": "^11.1.0",
+      "ip-address": "^10.5.1"
     }
   }
 }

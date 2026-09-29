@@ -89,6 +89,21 @@ jobs:
       - name: Run translation validation
         run: pnpm ci:required -- validate
 
+  advisories:
+    name: Dependency Advisories
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Check locked dependencies for advisories
+        run: pnpm ci:required -- advisories
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -124,7 +139,7 @@ jobs:
     name: merge-gate
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [build]
+    needs: [build, advisories]
     if: always()
 
     steps:
@@ -132,5 +147,9 @@ jobs:
         run: |
           if [ "${{ needs.build.result }}" != "success" ]; then
             echo "build result was ${{ needs.build.result }}"
+            exit 1
+          fi
+          if [ "${{ needs.advisories.result }}" != "success" ]; then
+            echo "advisories result was ${{ needs.advisories.result }}"
             exit 1
           fi

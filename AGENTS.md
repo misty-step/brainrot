@@ -12,7 +12,8 @@ This pnpm + Turborepo monorepo splits product code into `apps/web` (Next.js fron
 Install once with `pnpm install`. `pnpm dev` starts all workspaces; narrow scope with `--filter`. Ship-ready bundles come from `pnpm build`. Quality gates: `pnpm lint`, `pnpm typecheck`, and `pnpm format --check`. Vitest commands cover most workflows—`pnpm test` (watch), `pnpm test:run` (CI), and `pnpm test:coverage`. Content contributors should run `pnpm validate:all`, `pnpm generate:formats book <slug>`, and `pnpm sync:spaces book <slug>` whenever translation files change.
 
 Required PR gate: `pnpm ci:required` runs lint, typecheck, tests, translation
-validation, and build through `scripts/ci-required.sh`. GitHub Actions may fan
+validation, the dependency-advisory ratchet, and build through
+`scripts/ci-required.sh`. GitHub Actions may fan
 those lanes out for speed, but required CI should keep calling that script with
 the matching lane argument. Deploy, publish, sync, monitor, Dependabot
 auto-merge, and content mutation workflows are advisory/operational unless a
