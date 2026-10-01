@@ -33,7 +33,7 @@
     "inquirer": "^13.0.2",
     "js-yaml": "^4.3.2",
     "ora": "^8.2.0",
-    "p-retry": "^5.1.0",
+    "p-retry": "^8.0.1",
     "playwright": "^1.62.1"
   },
   "devDependencies": {
