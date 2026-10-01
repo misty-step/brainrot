@@ -74,7 +74,7 @@
     "postcss": "^8.5.23",
     "prettier": "^3.7.4",
     "puppeteer": "^24.32.0",
-    "tailwindcss": "^4.1.17",
+    "tailwindcss": "^4.3.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
