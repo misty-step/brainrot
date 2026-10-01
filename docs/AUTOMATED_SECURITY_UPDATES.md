@@ -123,6 +123,25 @@ If a security update fails to auto-merge:
    - Approve manually if CI issues are pre-existing
    - Merge manually after verification
 
+### Locked Transitive Advisories
+
+Use `pnpm ci:required -- advisories` to check the resolved lockfile, not just
+direct dependency ranges. A new advisory fails the gate; an advisory removed
+from the tree also fails until its stale baseline entry is deleted.
+
+For a package that Dependabot cannot lift, add a patched floor under
+`pnpm.overrides`, regenerate with `pnpm install --lockfile-only`, then install
+with `pnpm install --frozen-lockfile`. Scope overrides by the existing major
+range when multiple major lines coexist. Crossing a parent's requested major
+requires explicit review and an actual consumer smoke run.
+
+Delete only the fixed advisory/package pairs from
+`scripts/dependency-advisories-baseline.json`; never add entries to silence a
+new finding. Run the gate with `ADVISORY_BASELINE_BASE_REF=origin/master` and
+the existing advisory tests. On a disposable copy, exercise Dependabot's
+`pnpm update <package> --lockfile-only --no-save -r` command and confirm that
+the fixed tree remains resolvable.
+
 ### Override Auto-merge
 To prevent a security update from auto-merging:
 
